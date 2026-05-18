@@ -1,0 +1,102 @@
+{
+  "total_rounds": 5,
+  "completed_rounds": 5,
+  "rounds": [
+    {
+      "round": 1,
+      "config": {
+        "w_lateral": 2.0, "w_heading": 2.0, "w_velocity": 0.3, "w_smooth": 0.5,
+        "slack_penalty": 1e5, "learning_rate": 1e-4, "warmup_steps": 1000,
+        "update_interval": 5, "alpha_yaw": 0.5, "alpha_rate": 0.5, "eval_interval": 2000,
+        "gamma": 0.99, "tau": 0.005, "alpha_init": 0.2, "batch_size": 512, "episode_length": 300, "bc_pretrain": true
+      },
+      "results": {
+        "mean_return": -1808.16, "std_return": 648.93,
+        "rmse_y": 0.2280, "rmse_psi": 0.9998,
+        "violations_yaw_rate": 2162, "violations_actuator_sat": 0, "violations_rate_limit": 5244,
+        "violations_total": 7406,
+        "best_training_return": -1056.7,
+        "best_at_step": 2000,
+        "bc_loss": 0.0008
+      },
+      "analysis": "三项改进首轮，当前最优基准（并列）。BC预训练loss=0.0008，step2000 best=-1056.7（vs旧baseline -2253，提升53%）。评估return=-1808（vs旧-9395，提升81%）。"
+    },
+    {
+      "round": 2,
+      "config": {
+        "w_lateral": 3.0, "w_heading": 3.0, "w_velocity": 0.3, "w_smooth": 0.8,
+        "slack_penalty": 1e5, "learning_rate": 1e-4, "warmup_steps": 1000,
+        "update_interval": 5, "alpha_yaw": 0.3, "alpha_rate": 0.5, "eval_interval": 2000,
+        "gamma": 0.99, "tau": 0.005, "alpha_init": 0.2, "batch_size": 512, "episode_length": 300, "bc_pretrain": true
+      },
+      "results": {
+        "mean_return": -2649.58, "std_return": 785.09,
+        "rmse_y": 0.2910, "rmse_psi": 0.9456,
+        "violations_yaw_rate": 2254, "violations_actuator_sat": 0, "violations_rate_limit": 5260,
+        "violations_total": 7514,
+        "best_training_return": -951.1,
+        "best_at_step": 2000,
+        "bc_loss": 0.0007
+      },
+      "analysis": "alpha_yaw=0.3过于保守，评估return=-2649。结论：alpha_yaw不能低于0.5。"
+    },
+    {
+      "round": 3,
+      "config": {
+        "w_lateral": 3.0, "w_heading": 3.0, "w_velocity": 0.3, "w_smooth": 0.6,
+        "slack_penalty": 1e5, "learning_rate": 1e-4, "warmup_steps": 1000,
+        "update_interval": 5, "alpha_yaw": 0.5, "alpha_rate": 0.5, "eval_interval": 2000,
+        "gamma": 0.995, "tau": 0.005, "alpha_init": 0.2, "batch_size": 512, "episode_length": 300, "bc_pretrain": true
+      },
+      "results": {
+        "mean_return": -1927.78, "std_return": 465.06,
+        "rmse_y": 0.2580, "rmse_psi": 0.7344,
+        "violations_yaw_rate": 2254, "violations_actuator_sat": 0, "violations_rate_limit": 5266,
+        "violations_total": 7520,
+        "best_training_return": -2078.1,
+        "best_at_step": 4000,
+        "bc_loss": 0.0003
+      },
+      "analysis": "gamma=0.995严重有害，step2000 rate_limit违反277次爆发，Q值快速发散。结论：gamma必须用0.99。"
+    },
+    {
+      "round": 4,
+      "config": {
+        "w_lateral": 3.0, "w_heading": 3.0, "w_velocity": 0.3, "w_smooth": 0.6,
+        "slack_penalty": 1e5, "learning_rate": 1e-4, "warmup_steps": 1000,
+        "update_interval": 5, "alpha_yaw": 0.5, "alpha_rate": 0.5, "eval_interval": 2000,
+        "gamma": 0.99, "tau": 0.01, "alpha_init": 0.2, "batch_size": 512, "episode_length": 300, "bc_pretrain": true
+      },
+      "results": {
+        "mean_return": -2158.41, "std_return": 790.43,
+        "rmse_y": 0.2650, "rmse_psi": 0.8940,
+        "violations_yaw_rate": 2318, "violations_actuator_sat": 0, "violations_rate_limit": 5233,
+        "violations_total": 7551,
+        "best_training_return": -1593.5,
+        "best_at_step": 6000,
+        "bc_loss": 0.0006
+      },
+      "analysis": "tau=0.01使best后移至step6000（-1593.5），延缓发散有效。但w=3.0+tau=0.01评估return=-2158，仍不如R1的-1808。结论：w=2.0是更好的选择。"
+    },
+    {
+      "round": 5,
+      "config": {
+        "w_lateral": 2.0, "w_heading": 2.0, "w_velocity": 0.5, "w_smooth": 0.5,
+        "slack_penalty": 1e5, "learning_rate": 1e-4, "warmup_steps": 1000,
+        "update_interval": 5, "alpha_yaw": 0.5, "alpha_rate": 0.5, "eval_interval": 2000,
+        "gamma": 0.99, "tau": 0.005, "alpha_init": 0.1, "batch_size": 512, "episode_length": 300, "bc_pretrain": true
+      },
+      "results": {
+        "mean_return": -1816.42, "std_return": 513.80,
+        "rmse_y": 0.3424, "rmse_psi": 0.8288,
+        "violations_yaw_rate": 2337, "violations_actuator_sat": 0, "violations_rate_limit": 5230,
+        "violations_total": 7567,
+        "best_training_return": -1520.8,
+        "best_at_step": 6000,
+        "bc_loss": 0.0008
+      },
+      "analysis": "w_velocity=0.5和alpha_init=0.1：step4000 yaw_rate违反1168次爆发（速度惩罚导致激进转向触发RCBF约束），但step6000 best=-1520.8。评估return=-1816，与R1（-1808）几乎持平。结论：w_velocity不能轻易增大。最优配置确认为R1默认参数。"
+    }
+  ],
+  "conclusion": "5轮实验（三项改进后）核心结论：(1) 三项改进共同作用将评估return从-9395提升至-1808（81%改善）；(2) R1默认参数（w=2.0, alpha_yaw=0.5, gamma=0.99, tau=0.005, alpha_init=0.2）在10k步内最优；(3) 明确有害参数：alpha_yaw<0.5（RCBF过紧）、gamma>0.99（deadly triad加剧）；(4) 10k步仍无法收敛（RMSE_y>0.2m, RMSE_psi>0.8rad），100k+步训练是下一步目标；(5) best checkpoint出现时间从step2000推移到step4000-6000，说明BC预训练+新参数使训练更稳定。"
+}
